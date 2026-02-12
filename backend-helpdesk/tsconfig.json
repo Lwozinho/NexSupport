@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es2016",             /* Versão do JavaScript gerado */
+    "module": "commonjs",           /* Padrão do Node.js */
+    "rootDir": "./src",             /* Onde está seu código */
+    "outDir": "./dist",             /* Onde ficará o código compilado (se precisar) */
+    "esModuleInterop": true,        /* Permite importar bibliotecas CommonJS como se fossem ES Modules */
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,                 /* Ativa verificações de segurança */
+    "skipLibCheck": true,           /* Ignora verificação de tipos dentro das bibliotecas (economiza dor de cabeça) */
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types"
+    ]
+  }
+}

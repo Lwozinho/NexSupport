@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("CLIENT") // "CLIENT" ou "TECH"
+  
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // RELAÇÃO: Um usuário tem vários chamados
+  ticketsCreated Ticket[] @relation("TicketCustomer")
+  ticketsAsTech  Ticket[] @relation("TicketTechnician")
+
+  @@map("users")
+}
+
+model Ticket {
+  id          Int   @id @default(autoincrement())
+  title       String
+  description String
+  attachment  String?  
+  status      String   @default("ABERTO") 
+  
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  started_at  DateTime?
+  ended_at    DateTime? 
+
+  // RELAÇÃO: Todo chamado pertence a um usuário (cliente)
+  customer    User     @relation("TicketCustomer", fields: [customer_id], references: [id])
+  customer_id String
+
+  // RELAÇÃO 2: Quem atendeu (Técnico) - É opcional (?) pois nasce sem técnico
+  technician    User?    @relation("TicketTechnician", fields: [technician_id], references: [id])
+  technician_id String?
+
+
+  @@map("tickets")
+}
