@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../../components/Button';
 import { api } from '../../services/api';
+import {FiUsers, FiX} from 'react-icons/fi';
+
 import { NewTicketModal } from '../../components/NewTicketModal';
 import { TicketDetailModal } from '../../components/TicketDetailModal';
 import {MetricsDashboard} from '../../components/MetricsDashboard'
@@ -37,6 +39,14 @@ export default function Dashboard() {
   const [ticketDetail, setTicketDetail] = useState<TicketProps>();
   const [searchText, setSearchText] = useState('');
   const [modalClientOpen, setModalClientOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [showUsersModal, setShowUsersModal] = useState(false);
+
+  async function handleOpenUsersModal() {
+    const response = await api.get('/users');
+    setUsers(response.data);
+    setShowUsersModal(true);
+  }
 
   async function loadTickets() {
     if (!user) return;
@@ -149,6 +159,15 @@ export default function Dashboard() {
               <p className="text-sm font-medium text-gray-900">{user.name}</p>
               <p className="text-xs text-gray-500">{user.role === 'TECH' ? 'Técnico' : 'Cliente'}</p>
             </div>
+
+            <button 
+            onClick={handleOpenUsersModal} 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center gap-2"
+            >
+            <FiUsers size={20} color="#FFF" />
+            Ver Usuários
+            </button>
+
             <Button onClick={signOut} style={{ backgroundColor: '#ef4444', height: '36px', padding: '0 16px' }}>Sair</Button>
           </div>
         </div>
@@ -259,6 +278,52 @@ export default function Dashboard() {
           onRequestClose={() => setModalClientOpen(false)}
         />
       )}
+
+      {/* MODAL DE USUÁRIOS */}
+{showUsersModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white w-[90%] max-w-2xl p-6 rounded-lg shadow-lg relative">
+      
+      {/* Botão de Fechar */}
+      <button 
+        onClick={() => setShowUsersModal(false)} 
+        className="absolute top-4 right-4 text-gray-500 hover:text-red-500"
+      >
+        <FiX size={24} />
+      </button>
+
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Usuários Cadastrados</h2>
+
+      <div className="overflow-y-auto max-h-[60vh]">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-gray-100 border-b">
+              <th className="p-3 text-gray-700">Nome</th>
+              <th className="p-3 text-gray-700">Email</th>
+              <th className="p-3 text-gray-700">Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user: any) => (
+              <tr key={user.id} className="border-b hover:bg-gray-50">
+                <td className="p-3 text-gray-800">{user.name}</td>
+                <td className="p-3 text-gray-600">{user.email}</td>
+                <td className="p-3">
+                  <span className={`px-2 py-1 rounded text-xs font-bold ${
+                    user.role === 'TECH' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
+                  }`}>
+                    {user.role === 'TECH' ? 'Técnico' : 'Cliente'}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+)}
     </div>
   );
 }
