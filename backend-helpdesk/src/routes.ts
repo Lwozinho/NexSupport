@@ -9,6 +9,7 @@ import { UpdateTicketController } from './controllers/UpdateTicketController';
 import { DashboardMetricController } from './controllers/DashboardMetricController';
 import { CreateClientController } from './controllers/CreateClientController';
 import { ListUsersController } from './controllers/ListUsersController'; 
+import { EditUserController } from './controllers/EditUserController';
 
 import { isAuthenticated } from './middlewares/isAuthenticated';
 import uploadConfig from './config/multer';
@@ -36,6 +37,7 @@ router.put('/tickets/update', isAuthenticated, updateTicketController.handle);
 router.get('/metrics', isAuthenticated, dashboardMetricController.handle);
 router.post('/users/client', isAuthenticated, createClientController.handle);
 
-router.get('/users', isAuthenticated, new ListUsersController().handle)
+router.get('/users', isAuthenticated, new ListUsersController().handle);
+router.put('/users', isAuthenticated, new EditUserController().handle)
 
 export { router };
